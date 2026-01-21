@@ -1,5 +1,8 @@
 {
-  "name": "Vaishnavi Restaurant",
-  "description": "A premium dining and bar experience app for Vaishnavi Restaurant, featuring gourmet menus, beverage lists, and table reservations with a sophisticated gold and brown aesthetic.",
-  "requestFramePermissions": []
+  "name": "Vaishnavi Hotel",
+  "description": "Premium Maharashtrian Dine-In App. Experience authentic flavors with seamless table-side ordering, beverage lists, and heritage ambiance.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
 }
