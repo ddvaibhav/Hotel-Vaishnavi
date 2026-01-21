@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { GoogleGenAI } from "@google/genai";
+import { COLORS } from '../styles';
 
 const GeneratedBanner: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -13,7 +15,6 @@ const GeneratedBanner: React.FC = () => {
       setError(false);
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
-      // Prompt meticulously crafted to match the user's reference image exactly with precise Marathi text
       const prompt = `Create a high-end, cinematic 8k landscape banner for "Hotel Vaishnavi Restaurant & Bar". 
       The image MUST feature the exact Marathi text: "हॉटेल वैष्णवी रेस्टॉरंट अँड बार". 
       Layout of text: 
@@ -61,38 +62,107 @@ const GeneratedBanner: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="w-full h-full bg-[#1A120B] flex flex-col items-center justify-center">
-        <div className="w-10 h-10 border-2 border-[#D4AF37]/20 border-t-[#D4AF37] rounded-full animate-spin mb-4"></div>
-        <p className="text-[10px] font-bold text-[#D4AF37]/60 uppercase tracking-[0.3em] font-serif italic">हॉटेल वैष्णवी</p>
-      </div>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="small" color={COLORS.gold} />
+        <Text style={styles.loadingText}>हॉटेल वैष्णवी</Text>
+      </View>
     );
   }
 
   if (error || !imageUrl) {
     return (
-      <div className="w-full h-full bg-[#3E2723] flex flex-col items-center justify-center p-8 text-center border-2 border-[#D4AF37]/20">
-        <h3 className="text-[#D4AF37] text-xl font-serif font-bold mb-2">हॉटेल वैष्णवी</h3>
-        <p className="text-white/50 text-[10px] font-medium tracking-widest uppercase mb-4">Heritage Restaurant & Bar</p>
-        <button 
-          onClick={generateBanner}
-          className="px-6 py-2 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-[9px] font-bold uppercase tracking-widest hover:bg-[#D4AF37]/10 transition-colors"
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorTitle}>हॉटेल वैष्णवी</Text>
+        <Text style={styles.errorSubtitle}>Heritage Restaurant & Bar</Text>
+        <TouchableOpacity 
+          onPress={generateBanner}
+          style={styles.retryButton}
         >
-          Retry Banner
-        </button>
-      </div>
+          <Text style={styles.retryText}>Retry Banner</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 
   return (
-    <div className="relative w-full h-full">
-      <img
-        src={imageUrl}
-        className="w-full h-full object-cover"
-        alt="हॉटेल वैष्णवी रेस्टॉरंट अँड बार"
+    <View style={styles.container}>
+      <Image
+        source={{ uri: imageUrl }}
+        style={styles.image}
+        resizeMode="cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10"></div>
-    </div>
+      <View style={styles.gradient} />
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  gradient: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#1A120B',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: 'rgba(212, 175, 55, 0.6)',
+    textTransform: 'uppercase',
+    letterSpacing: 3,
+    fontFamily: 'serif',
+  },
+  errorContainer: {
+    flex: 1,
+    backgroundColor: '#3E2723',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.2)',
+  },
+  errorTitle: {
+    color: COLORS.gold,
+    fontSize: 20,
+    fontWeight: 'bold',
+    fontFamily: 'serif',
+    marginBottom: 5,
+  },
+  errorSubtitle: {
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 20,
+  },
+  retryButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.4)',
+  },
+  retryText: {
+    color: COLORS.gold,
+    fontSize: 9,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  }
+});
 
 export default GeneratedBanner;

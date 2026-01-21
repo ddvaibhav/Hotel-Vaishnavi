@@ -1,5 +1,7 @@
 import { AppRegistry } from 'react-native';
 import App from './App';
-import { name as appName } from './app.json';
 
-AppRegistry.registerComponent(appName, () => App);
+// Ensure the entry registration matches index.js for reliable native booting
+AppRegistry.registerComponent('VaishnaviHotel', () => App);
+
+export default App;

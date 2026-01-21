@@ -1,6 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, ScrollView, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import GeneratedBanner from './GeneratedBanner';
+import { COLORS } from '../styles';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const BANNER_WIDTH = SCREEN_WIDTH - 40;
 
 const BANNERS = [
   {
@@ -18,63 +23,150 @@ const BANNERS = [
 
 const BannerSlider: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    // Longer interval for the primary hero banner
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % BANNERS.length);
+      const nextIndex = (currentIndex + 1) % BANNERS.length;
+      setCurrentIndex(nextIndex);
+      scrollViewRef.current?.scrollTo({ x: nextIndex * BANNER_WIDTH, animated: true });
     }, 7000);
     return () => clearInterval(timer);
   }, [currentIndex]);
 
+  const handleScroll = (event: any) => {
+    const contentOffset = event.nativeEvent.contentOffset.x;
+    const index = Math.round(contentOffset / BANNER_WIDTH);
+    if (index !== currentIndex) {
+      setCurrentIndex(index);
+    }
+  };
+
   return (
-    <div className="relative h-60 rounded-[32px] overflow-hidden shadow-2xl border border-white/40 mb-8 bg-stone-900 group">
-      {BANNERS.map((banner, idx) => (
-        <div
-          key={idx}
-          className={`absolute inset-0 transition-opacity duration-[1500ms] ease-in-out ${
-            idx === currentIndex 
-              ? 'opacity-100 scale-100' 
-              : 'opacity-0 scale-105 pointer-events-none'
-          }`}
+    <View style={styles.wrapper}>
+      <View style={styles.container}>
+        <ScrollView
+          ref={scrollViewRef}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={handleScroll}
+          scrollEventThrottle={16}
         >
-          {banner.type === 'generated' ? (
-            <GeneratedBanner />
-          ) : (
-            <div className="w-full h-full relative">
-              <img
-                src={banner.url}
-                className="w-full h-full object-cover"
-                alt={banner.title}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex flex-col justify-end p-6">
-                <span className="text-[#D4AF37] text-[10px] font-bold uppercase tracking-[0.4em] mb-1 block">
-                  Luxury Dining
-                </span>
-                <h3 className="text-white text-2xl font-serif font-bold leading-tight mb-1">{banner.title}</h3>
-                <p className="text-white/70 text-xs font-medium tracking-wide">{banner.subtitle}</p>
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
-      
-      {/* Indicator Dots */}
-      <div className="absolute bottom-5 left-0 right-0 flex justify-center gap-2 z-20">
-        {BANNERS.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setCurrentIndex(idx)}
-            className={`h-1.5 rounded-full transition-all duration-700 shadow-md ${
-              idx === currentIndex 
-                ? 'w-10 bg-[#D4AF37]' 
-                : 'w-2 bg-white/30 hover:bg-white/50'
-            }`}
-          />
-        ))}
-      </div>
-    </div>
+          {BANNERS.map((banner, idx) => (
+            <View key={idx} style={styles.slide}>
+              {banner.type === 'generated' ? (
+                <GeneratedBanner />
+              ) : (
+                <View style={styles.staticBanner}>
+                  <Image
+                    source={{ uri: banner.url }}
+                    style={styles.image}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.overlay}>
+                    <Text style={styles.categoryLabel}>Luxury Dining</Text>
+                    <Text style={styles.title}>{banner.title}</Text>
+                    <Text style={styles.subtitle}>{banner.subtitle}</Text>
+                  </View>
+                </View>
+              )}
+            </View>
+          ))}
+        </ScrollView>
+        
+        {/* Indicator Dots */}
+        <View style={styles.indicators}>
+          {BANNERS.map((_, idx) => (
+            <View
+              key={idx}
+              style={[
+                styles.dot,
+                idx === currentIndex ? styles.activeDot : styles.inactiveDot
+              ]}
+            />
+          ))}
+        </View>
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  wrapper: {
+    paddingHorizontal: 20,
+    marginBottom: 30,
+  },
+  container: {
+    height: 240,
+    borderRadius: 32,
+    overflow: 'hidden',
+    backgroundColor: '#000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 10,
+  },
+  slide: {
+    width: BANNER_WIDTH,
+    height: 240,
+  },
+  staticBanner: {
+    width: '100%',
+    height: '100%',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'flex-end',
+    padding: 24,
+  },
+  categoryLabel: {
+    color: COLORS.gold,
+    fontSize: 9,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    letterSpacing: 3,
+    marginBottom: 4,
+  },
+  title: {
+    color: '#FFF',
+    fontSize: 22,
+    fontWeight: 'bold',
+    fontFamily: 'serif',
+    marginBottom: 2,
+  },
+  subtitle: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 11,
+    fontWeight: '500',
+  },
+  indicators: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  dot: {
+    height: 6,
+    borderRadius: 3,
+  },
+  activeDot: {
+    width: 30,
+    backgroundColor: COLORS.gold,
+  },
+  inactiveDot: {
+    width: 6,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+  }
+});
 
 export default BannerSlider;

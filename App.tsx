@@ -88,52 +88,52 @@ const App: React.FC = () => {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'SPLASH': return <SplashScreen />;
-      case 'AUTH': return <AuthScreen
-        onLogin={() => setCurrentScreen('LOGIN')}
-        onSignup={() => setCurrentScreen('SIGNUP')}
-        onGuest={() => handleAuth({ name: 'पाहुणे', email: '', mobile: '', isGuest: true })}
+      case 'AUTH': return <AuthScreen 
+        onLogin={() => setCurrentScreen('LOGIN')} 
+        onSignup={() => setCurrentScreen('SIGNUP')} 
+        onGuest={() => handleAuth({ name: 'पाहुणे', email: '', mobile: '', isGuest: true })} 
       />;
-      case 'LOGIN': return <LoginScreen
-        onBack={() => setCurrentScreen('AUTH')}
-        onLoginSuccess={handleAuth}
+      case 'LOGIN': return <LoginScreen 
+        onBack={() => setCurrentScreen('AUTH')} 
+        onLoginSuccess={handleAuth} 
       />;
-      case 'SIGNUP': return <SignupScreen
-        onBack={() => setCurrentScreen('AUTH')}
-        onSignupSuccess={handleAuth}
+      case 'SIGNUP': return <SignupScreen 
+        onBack={() => setCurrentScreen('AUTH')} 
+        onSignupSuccess={handleAuth} 
       />;
-      case 'HOME': return <HomeScreen
-        user={user}
-        onNavigate={setCurrentScreen}
+      case 'HOME': return <HomeScreen 
+        user={user} 
+        onNavigate={setCurrentScreen} 
       />;
-      case 'FOOD_MENU': return <FoodMenuScreen
-        onBack={() => setCurrentScreen('HOME')}
-        onAddToCart={addToCart}
+      case 'FOOD_MENU': return <FoodMenuScreen 
+        onBack={() => setCurrentScreen('HOME')} 
+        onAddToCart={addToCart} 
       />;
-      case 'BEER_DRINKS': return <DrinksScreen
-        onBack={() => setCurrentScreen('HOME')}
-        onAddToCart={addToCart}
+      case 'BEER_DRINKS': return <DrinksScreen 
+        onBack={() => setCurrentScreen('HOME')} 
+        onAddToCart={addToCart} 
       />;
-      case 'DINE_IN_ORDER': return <DineInOrderScreen
-        onBack={() => setCurrentScreen('HOME')}
-        cartItems={cart}
-        onUpdateQty={updateQuantity}
-        onPlaceOrder={placeDineInOrder}
+      case 'DINE_IN_ORDER': return <DineInOrderScreen 
+        onBack={() => setCurrentScreen('HOME')} 
+        cartItems={cart} 
+        onUpdateQty={updateQuantity} 
+        onPlaceOrder={placeDineInOrder} 
       />;
-      case 'ORDER_CONFIRMATION': return <OrderConfirmationScreen
-        order={lastOrder}
-        onHome={() => setCurrentScreen('HOME')}
+      case 'ORDER_CONFIRMATION': return <OrderConfirmationScreen 
+        order={lastOrder} 
+        onHome={() => setCurrentScreen('HOME')} 
         language={language} // Passed missing language prop
       />;
-      case 'ABOUT_US': return <AboutUsScreen
-        onBack={() => setCurrentScreen('HOME')}
+      case 'ABOUT_US': return <AboutUsScreen 
+        onBack={() => setCurrentScreen('HOME')} 
       />;
-      case 'PROFILE': return <ProfileScreen
-        user={user}
-        onBack={() => setCurrentScreen('HOME')}
-        onLogout={logout}
+      case 'PROFILE': return <ProfileScreen 
+        user={user} 
+        onBack={() => setCurrentScreen('HOME')} 
+        onLogout={logout} 
         onOrders={() => setCurrentScreen('ORDER_HISTORY')} // Passed missing onOrders prop
       />;
-      case 'ORDER_HISTORY': return <OrderHistoryScreen
+      case 'ORDER_HISTORY': return <OrderHistoryScreen 
         onBack={() => setCurrentScreen('PROFILE')}
         orders={orders}
       />;
