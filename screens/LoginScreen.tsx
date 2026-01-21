@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import { User } from '../types';
+import { COLORS } from '../styles';
 
 interface LoginScreenProps {
   onBack: () => void;
@@ -14,9 +16,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onLoginSuccess }) => 
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Mock login
     onLoginSuccess({
-      name: 'John Doe',
+      name: 'User',
       email: identifier,
       mobile: '9876543210',
       isGuest: false
@@ -24,18 +25,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onLoginSuccess }) => 
   };
 
   return (
-    <div className="h-full flex flex-col bg-transparent">
-      <div className="p-6">
-        <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/60 backdrop-blur-md shadow-sm text-[#5D4037]">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-      </div>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+          <Text style={styles.backText}>←</Text>
+        </TouchableOpacity>
+      </View>
 
-      <div className="flex-1 px-8 pt-4">
-        <h1 className="text-3xl font-serif font-bold text-[#5D4037] mb-2">Welcome Back</h1>
-        <p className="text-[#5D4037]/60 mb-10">Sign in to access your bookings and preferences.</p>
+      <View style={styles.content}>
+        <Text style={styles.title}>Login</Text>
+        <Text style={styles.subtitle}>Welcome back to Vaishnavi Hotel</Text>
 
-        <div className="space-y-6">
+        <View style={styles.form}>
           <Input 
             label="Email or Mobile" 
             placeholder="example@mail.com" 
@@ -50,21 +51,70 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onBack, onLoginSuccess }) => 
             onChange={setPassword} 
           />
 
-          <div className="text-right">
-            <button className="text-sm font-semibold text-[#D4AF37] hover:underline">Forgot Password?</button>
-          </div>
+          <TouchableOpacity style={styles.forgotPass}>
+            <Text style={styles.forgotText}>Forgot Password?</Text>
+          </TouchableOpacity>
 
-          <Button label="Login" variant="primary" onClick={handleLogin} />
-        </div>
-
-        <div className="mt-12 text-center">
-          <p className="text-sm text-[#5D4037]/60">
-            Don't have an account? <button className="text-[#D4AF37] font-bold">Sign Up</button>
-          </p>
-        </div>
-      </div>
-    </div>
+          <Button label="Login" onPress={handleLogin} />
+        </View>
+      </View>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.cream,
+  },
+  header: {
+    padding: 20,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: COLORS.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  backText: {
+    fontSize: 24,
+    color: COLORS.primary,
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 30,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    fontFamily: 'serif',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: COLORS.primary,
+    opacity: 0.6,
+    marginTop: 6,
+    marginBottom: 40,
+  },
+  form: {
+    width: '100%',
+  },
+  forgotPass: {
+    alignSelf: 'flex-end',
+    marginBottom: 24,
+  },
+  forgotText: {
+    color: COLORS.saffron,
+    fontWeight: 'bold',
+    fontSize: 13,
+  }
+});
 
 export default LoginScreen;

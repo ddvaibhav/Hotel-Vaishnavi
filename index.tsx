@@ -1,16 +1,11 @@
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { AppRegistry } from 'react-native';
 import App from './App';
 
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
+// This is the standard entry point for a React Native CLI project
+// The name must match the project name in your Xcode/Android studio configuration
+AppRegistry.registerComponent('VaishnaviHotel', () => App);
 
-const root = ReactDOM.createRoot(rootElement);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+// In some preview environments, we might need a fallback, 
+// but for the Xcode project, the above is the source of truth.
+export default App;

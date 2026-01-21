@@ -1,76 +1,189 @@
 
 import React from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { COLORS, globalStyles } from '../styles';
+import { APP_NAME, TAGLINE } from '../constants';
 
 interface AboutUsScreenProps {
   onBack: () => void;
-  language: 'en' | 'mr';
 }
 
-const AboutUsScreen: React.FC<AboutUsScreenProps> = ({ onBack, language }) => {
-  const t = {
-    en: {
-      title: "Vaishnavi Heritage",
-      storyTitle: "The Vaishnavi Legacy",
-      story: "Since its inception, Vaishnavi Hotel Restaurant & Bar has been the cornerstone of authentic Maharashtrian flavors in the region. Founded on the principles of 'Aapulkichi Seva' (Affectionate Service), we take pride in our heritage recipes passed down through generations. From our iconic spicy Saoji curries to our refined Bar selection, every detail is crafted for a royal experience.",
-      missionTitle: "Our Soul",
-      mission: "To serve not just food, but a piece of Maharashtrian tradition, ensuring every guest feels the warmth of a home-cooked feast with a premium touch.",
-      qualityTitle: "Mastery in Spice",
-      quality: "Our spices are hand-ground daily. We source the finest local ingredients to maintain the bold, unmistakable character of genuine Maharashtrian cuisine."
-    },
-    mr: {
-      title: "वैष्णवी वारसा",
-      storyTitle: "वैष्णवीची परंपरा",
-      story: "वैष्णवी हॉटेल रेस्टॉरंट अँड बार हे या भागातील अस्सल महाराष्ट्रीयन चवींचे केंद्र आहे. 'आपुलकीची सेवा' या तत्त्वावर आधारित, पिढ्यानपिढ्या चालत आलेल्या वारसा पाककृतींचा आम्हाला अभिमान आहे. आमच्या सुप्रसिद्ध मसालेदार सावजी करीपासून ते आमच्या खास बार सिलेक्शनपर्यंत, प्रत्येक गोष्ट रॉयल अनुभवासाठी तयार केली आहे.",
-      missionTitle: "आमचा आत्मा",
-      mission: "केवळ अन्नच नाही, तर महाराष्ट्रीयन परंपरेचा एक भाग देणे, प्रत्येक पाहुण्याला घरगुती मेजवानीची उब आणि प्रीमियम स्पर्श जाणवेल याची खात्री करणे.",
-      qualityTitle: "मसाल्यांमधील प्रभुत्व",
-      quality: "आमचे मसाले रोज हाताने दळले जातात. अस्सल महाराष्ट्रीयन खाद्यसंस्कृतीचे ठळक वैशिष्ट्य टिकवून ठेवण्यासाठी आम्ही स्थानिक उत्कृष्ट घटक वापरतो."
-    }
-  }[language];
-
+const AboutUsScreen: React.FC<AboutUsScreenProps> = ({ onBack }) => {
   return (
-    <div className="h-full flex flex-col bg-transparent overflow-y-auto no-scrollbar pb-32">
-      <div className="p-6 pt-12 flex items-center gap-4 sticky top-0 z-10 glass-card-premium border-b border-[#E67E22]/10">
-        <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md text-[#5D4037] active:scale-90 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-        <h1 className="text-xl font-serif font-bold text-[#5D4037]">{t.title}</h1>
-      </div>
+    <View style={globalStyles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onBack}>
+          <Text style={styles.backBtn}>← Back</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Our Story</Text>
+        <View style={{ width: 40 }} />
+      </View>
 
-      <div className="px-8 py-10">
-        <div className="mb-12 text-center">
-          <div className="w-24 h-24 border-2 border-[#D4AF37] rounded-[32px] flex items-center justify-center mx-auto mb-8 p-6 bg-white shadow-xl rotate-3 transform">
-            <span className="text-4xl font-serif font-bold text-[#5D4037]">V</span>
-          </div>
-          <h2 className="text-2xl font-serif font-bold text-[#5D4037] mb-3">{t.storyTitle}</h2>
-          <div className="h-1 w-16 bg-[#D4AF37] mx-auto mb-8 rounded-full"></div>
-          <p className="text-sm text-[#5D4037]/80 leading-relaxed font-medium text-justify">
-            {t.story}
-          </p>
-        </div>
+      <ScrollView style={styles.content}>
+        <View style={styles.heritageCard}>
+          <View style={styles.logoBadge}>
+            <Text style={styles.badgeText}>V</Text>
+          </View>
+          <Text style={styles.heritageTitle}>The Vaishnavi Legacy</Text>
+          <Text style={styles.heritageText}>
+            Since 1994, Vaishnavi Hotel has been the premier destination for authentic Maharashtrian cuisine in Nagpur. 
+            We specialize in the rich culinary heritage of Vidarbha and Kolhapur, using age-old recipes 
+            and hand-selected spices.
+          </Text>
+        </View>
 
-        <div className="space-y-6">
-          <div className="glass-card-premium p-8 rounded-[40px] border border-[#D4AF37]/20 shadow-lg shadow-orange-900/5">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#E67E22] mb-4">{t.missionTitle}</h3>
-            <p className="text-xs text-[#5D4037]/90 leading-relaxed font-semibold italic">
-              "{t.mission}"
-            </p>
-          </div>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Authentic Spices</Text>
+          <Text style={styles.bodyText}>
+            Our Saoji curry is world-renowned for its complex blend of 24 distinct spices, 
+            each roasted and ground in-house to maintain the bold character that defines Nagpur.
+          </Text>
+        </View>
 
-          <div className="glass-card-premium p-8 rounded-[40px] border border-[#D4AF37]/20 shadow-lg shadow-orange-900/5">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#E67E22] mb-4">{t.qualityTitle}</h3>
-            <p className="text-xs text-[#5D4037]/80 leading-relaxed font-medium">
-              {t.quality}
-            </p>
-          </div>
-        </div>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Family Experience</Text>
+          <Text style={styles.bodyText}>
+            We offer a premium dine-in environment perfect for families, business meetings, 
+            or a relaxed evening at our bar.
+          </Text>
+        </View>
 
-        <div className="mt-16 text-center opacity-30">
-           <p className="text-[9px] font-black uppercase tracking-[0.5em] text-[#5D4037]">Est. 1994 • Nagpur • Maharashtra</p>
-        </div>
-      </div>
-    </div>
+        {/* Footer Contact Details */}
+        <View style={styles.footer}>
+          <Text style={styles.footerHeader}>Contact Details</Text>
+          <View style={styles.contactRow}>
+            <Text style={styles.contactIcon}>✉️</Text>
+            <Text style={styles.contactText}>contact@vaishnavihotel.com</Text>
+          </View>
+          <View style={styles.contactRow}>
+            <Text style={styles.contactIcon}>📞</Text>
+            <Text style={styles.contactText}>+91 90000 00000</Text>
+          </View>
+          <View style={styles.contactRow}>
+            <Text style={styles.contactIcon}>📍</Text>
+            <Text style={styles.contactText}>Nagpur, Maharashtra, India</Text>
+          </View>
+          <Text style={styles.copyright}>© 2024 {APP_NAME} • All Rights Reserved</Text>
+        </View>
+        <View style={{ height: 80 }} />
+      </ScrollView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  header: {
+    paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.white,
+  },
+  backBtn: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.primary,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: COLORS.primary,
+    textTransform: 'uppercase',
+  },
+  content: {
+    padding: 20,
+  },
+  heritageCard: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 40,
+    padding: 40,
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  logoBadge: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: COLORS.gold,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  badgeText: {
+    fontSize: 30,
+    color: COLORS.gold,
+    fontWeight: 'bold',
+  },
+  heritageTitle: {
+    fontSize: 22,
+    color: COLORS.white,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  heritageText: {
+    fontSize: 14,
+    color: COLORS.white,
+    opacity: 0.8,
+    lineHeight: 24,
+    textAlign: 'center',
+  },
+  section: {
+    padding: 20,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: COLORS.saffron,
+    textTransform: 'uppercase',
+    marginBottom: 10,
+    letterSpacing: 1,
+  },
+  bodyText: {
+    fontSize: 15,
+    color: COLORS.primary,
+    lineHeight: 24,
+    opacity: 0.7,
+  },
+  footer: {
+    marginTop: 40,
+    padding: 30,
+    backgroundColor: COLORS.white,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: '#EEE',
+  },
+  footerHeader: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: COLORS.primary,
+    marginBottom: 20,
+    textTransform: 'uppercase',
+  },
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  contactIcon: {
+    marginRight: 15,
+    fontSize: 18,
+  },
+  contactText: {
+    fontSize: 14,
+    color: COLORS.primary,
+    fontWeight: '600',
+  },
+  copyright: {
+    marginTop: 20,
+    fontSize: 10,
+    textAlign: 'center',
+    color: '#AAA',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  }
+});
 
 export default AboutUsScreen;
