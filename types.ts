@@ -1,5 +1,5 @@
 
-export type Screen = 'SPLASH' | 'AUTH' | 'LOGIN' | 'SIGNUP' | 'HOME' | 'FOOD_MENU' | 'BEER_DRINKS' | 'DINE_IN_ORDER' | 'ORDER_CONFIRMATION' | 'PROFILE' | 'ORDER_HISTORY' | 'TABLE_RESERVATION' | 'ABOUT_US';
+export type Screen = 'SPLASH' | 'AUTH' | 'LOGIN' | 'SIGNUP' | 'HOME' | 'FOOD_MENU' | 'BEER_DRINKS' | 'DINE_IN_ORDER' | 'ORDER_CONFIRMATION' | 'ABOUT_US' | 'PROFILE' | 'ORDER_HISTORY';
 
 export interface User {
   name: string;
@@ -30,7 +30,7 @@ export interface Order {
   prepTime: string;
 }
 
-// Added TableReservation interface to fix compilation error in TableReservationScreen.tsx
+// Added TableReservation interface to fix import errors in reservation screens
 export interface TableReservation {
   id: string;
   guests: number;

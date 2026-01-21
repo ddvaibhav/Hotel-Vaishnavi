@@ -1,7 +1,9 @@
 
 import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, SafeAreaView } from 'react-native';
 import { MenuItem } from '../types';
 import { MOCK_MENU } from '../constants';
+import { COLORS } from '../styles';
 
 interface FoodMenuScreenProps {
   onBack: () => void;
@@ -10,64 +12,166 @@ interface FoodMenuScreenProps {
 
 const FoodMenuScreen: React.FC<FoodMenuScreenProps> = ({ onBack, onAddToCart }) => {
   const [activeCategory, setActiveCategory] = useState<'Veg' | 'Non-Veg'>('Veg');
-  
   const filteredMenu = MOCK_MENU.filter(item => item.category === activeCategory);
 
   return (
-    <div className="h-full flex flex-col bg-transparent relative overflow-hidden">
-      {/* Header */}
-      <div className="p-6 flex items-center justify-between glass-card-premium shadow-sm z-10 border-b border-[#E67E22]/10 sticky top-0">
-        <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-[#5D4037]/5 text-[#5D4037] active:scale-90 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-        <h1 className="text-lg font-serif font-bold text-[#5D4037]">Authentic Menu</h1>
-        <div className="w-10"></div>
-      </div>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+          <Text style={styles.backIcon}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Maharashtrian Menu</Text>
+        <View style={{ width: 40 }} />
+      </View>
 
-      {/* Category Tabs */}
-      <div className="p-4 flex gap-2 justify-center z-10 sticky top-20">
-        {['Veg', 'Non-Veg'].map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat as any)}
-            className={`flex-1 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border-2 ${
-              activeCategory === cat 
-                ? 'bg-[#E67E22] border-[#E67E22] text-white shadow-lg' 
-                : 'bg-white/80 border-white text-[#5D4037]/40'
-            }`}
-          >
-            {cat === 'Veg' ? '🥦 Pure Veg' : '🍗 Non-Veg'}
-          </button>
-        ))}
-      </div>
+      <View style={styles.tabs}>
+        <TouchableOpacity 
+          style={[styles.tab, activeCategory === 'Veg' && styles.activeTab]}
+          onPress={() => setActiveCategory('Veg')}
+        >
+          <Text style={[styles.tabText, activeCategory === 'Veg' && styles.activeTabText]}>Vegetarian</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.tab, activeCategory === 'Non-Veg' && styles.activeTab]}
+          onPress={() => setActiveCategory('Non-Veg')}
+        >
+          <Text style={[styles.tabText, activeCategory === 'Non-Veg' && styles.activeTabText]}>Non-Veg</Text>
+        </TouchableOpacity>
+      </View>
 
-      {/* Food Grid */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-6 pb-12 space-y-4">
+      <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
         {filteredMenu.map((item) => (
-          <div key={item.id} className="flex gap-4 glass-card-premium p-3 rounded-3xl border border-white/50 active:scale-[0.98] transition-all">
-            <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 shadow-md">
-              <img src={item.image} className="w-full h-full object-cover" alt={item.name} />
-            </div>
-            <div className="flex-1 flex flex-col justify-between py-1">
-              <div>
-                <h3 className="text-sm font-bold text-[#5D4037] leading-tight mb-0.5">{item.name}</h3>
-                <p className="text-[10px] text-[#5D4037]/50 line-clamp-2 leading-relaxed">{item.description}</p>
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <p className="text-base font-bold text-[#E67E22]">₹{item.price}</p>
-                <button 
-                  onClick={() => onAddToCart(item)}
-                  className="bg-[#5D4037] text-white px-4 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider shadow-md active:scale-90 transition-all"
-                >
-                  Add
-                </button>
-              </div>
-            </div>
-          </div>
+          <View key={item.id} style={styles.itemCard}>
+            <Image source={{ uri: item.image }} style={styles.itemImage} />
+            <View style={styles.itemContent}>
+              <View>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemDesc} numberOfLines={2}>{item.description}</Text>
+              </View>
+              <View style={styles.itemFooter}>
+                <Text style={styles.itemPrice}>₹{item.price}</Text>
+                <TouchableOpacity style={styles.addButton} onPress={() => onAddToCart(item)}>
+                  <Text style={styles.addButtonText}>ADD</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
         ))}
-      </div>
-    </div>
+        <View style={{ height: 40 }} />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.cream,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 20,
+    backgroundColor: COLORS.white,
+    elevation: 2,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backIcon: {
+    fontSize: 24,
+    color: COLORS.primary,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    fontFamily: 'serif',
+  },
+  tabs: {
+    flexDirection: 'row',
+    padding: 10,
+    backgroundColor: COLORS.white,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  activeTab: {
+    backgroundColor: COLORS.saffron,
+  },
+  tabText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    opacity: 0.4,
+  },
+  activeTabText: {
+    color: COLORS.white,
+    opacity: 1,
+  },
+  list: {
+    flex: 1,
+    padding: 16,
+  },
+  itemCard: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    marginBottom: 16,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+  },
+  itemImage: {
+    width: 110,
+    height: 110,
+  },
+  itemContent: {
+    flex: 1,
+    padding: 12,
+    justifyContent: 'space-between',
+  },
+  itemName: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+  },
+  itemDesc: {
+    fontSize: 11,
+    color: COLORS.primary,
+    opacity: 0.5,
+    marginTop: 2,
+  },
+  itemFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  itemPrice: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: COLORS.saffron,
+  },
+  addButton: {
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  addButtonText: {
+    color: COLORS.white,
+    fontSize: 11,
+    fontWeight: 'bold',
+  }
+});
 
 export default FoodMenuScreen;

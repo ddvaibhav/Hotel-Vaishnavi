@@ -1,146 +1,218 @@
 
 import React, { useState } from 'react';
+import { View, Text, TextInput, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { globalStyles, COLORS } from '../styles';
 import { CartItem } from '../types';
 import Button from '../components/Button';
-import Input from '../components/Input';
 
 interface DineInOrderScreenProps {
-  onBack: () => void;
   cartItems: CartItem[];
+  onBack: () => void;
   onUpdateQty: (id: string, delta: number) => void;
-  onPlaceOrder: (tableNumber: string) => void;
-  language: 'en' | 'mr';
+  onPlaceOrder: (table: string) => void;
 }
 
-const DineInOrderScreen: React.FC<DineInOrderScreenProps> = ({ onBack, cartItems, onUpdateQty, onPlaceOrder, language }) => {
+const DineInOrderScreen: React.FC<DineInOrderScreenProps> = ({ cartItems, onBack, onUpdateQty, onPlaceOrder }) => {
   const [tableNumber, setTableNumber] = useState('');
-  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-  const t = {
-    en: {
-      title: "Confirm Your Table",
-      table: "Table Selection",
-      tablePlaceholder: "Ex: T-04",
-      empty: "Your plate is empty! Add some Maharashtrian delights.",
-      subtotal: "Subtotal",
-      tax: "GST (5%)",
-      grandTotal: "Payable Amount",
-      place: "Send to Kitchen",
-      message: "Our staff will serve you at Table #",
-      required: "Please select a table number to proceed."
-    },
-    mr: {
-      title: "टेबल निवडा",
-      table: "टेबल नंबर",
-      tablePlaceholder: "उदा: T-04",
-      empty: "तुमच्या प्लेटमध्ये काहीच नाही! काहीतरी निवडा.",
-      subtotal: "एकूण",
-      tax: "जीएसटी (५%)",
-      grandTotal: "एकूण देय रक्कम",
-      place: "ऑर्डर पाठवा (स्वयंपाकघर)",
-      message: "आमचे कर्मचारी तुम्हाला टेबलवर सेवा देतील #",
-      required: "पुढे जाण्यासाठी कृपया टेबल नंबर निवडा."
-    }
-  }[language];
+  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const tax = subtotal * 0.05;
+  const total = subtotal + tax;
 
   return (
-    <div className="h-full flex flex-col bg-transparent pb-32">
-      <div className="p-6 pt-12 flex items-center justify-between glass-card-premium shadow-sm border-b border-[#E67E22]/10 sticky top-0 z-20">
-        <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-[#5D4037]/5 text-[#5D4037] active:scale-90 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-        <h1 className="text-xl font-serif font-bold text-[#5D4037]">{t.title}</h1>
-        <div className="w-10"></div>
-      </div>
+    <View style={globalStyles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onBack}>
+          <Text style={styles.backBtn}>← Back</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Dine-In Checkout</Text>
+        <View style={{ width: 40 }} />
+      </View>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-5 no-scrollbar">
-        {/* Urgent Table Number Notice */}
-        <div className="glass-card-premium p-6 rounded-[32px] border-2 border-[#E67E22] shadow-xl shadow-orange-900/5">
-          <div className="flex items-center gap-3 mb-4">
-             <span className="text-2xl">🛎️</span>
-             <h3 className="text-xs font-black uppercase tracking-widest text-[#E67E22]">{t.table}</h3>
-          </div>
-          <Input 
-            placeholder={t.tablePlaceholder} 
-            value={tableNumber} 
-            onChange={setTableNumber} 
+      <ScrollView style={styles.content}>
+        <View style={styles.tableCard}>
+          <Text style={styles.tableLabel}>Current Table Number</Text>
+          <TextInput
+            placeholder="Ex: T-04"
+            style={styles.tableInput}
+            value={tableNumber}
+            onChangeText={setTableNumber}
+            keyboardType="default"
           />
-        </div>
+          <Text style={styles.infoText}>⚠️ Order will be served at this table.</Text>
+        </View>
 
-        {cartItems.length === 0 ? (
-          <div className="h-64 flex flex-col items-center justify-center opacity-40 px-12">
-            <div className="text-7xl mb-6">🍽️</div>
-            <p className="font-bold uppercase tracking-[0.2em] text-[10px] text-center text-[#5D4037]">{t.empty}</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-[#5D4037]/40 px-2">Current Selection</h3>
-            {cartItems.map((item) => (
-              <div key={item.id} className="flex gap-4 glass-card-premium p-4 rounded-[28px] border border-white/60 shadow-sm animate-in fade-in slide-in-from-bottom-2">
-                <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-md flex-shrink-0">
-                  <img src={item.image} className="w-full h-full object-cover" alt={item.name} />
-                </div>
-                <div className="flex-1 flex flex-col justify-between py-1">
-                  <div>
-                    <h3 className="text-sm font-bold text-[#5D4037] leading-tight mb-1">{item.name}</h3>
-                    <p className="text-[#E67E22] font-black text-xs tracking-wider">₹{item.price}</p>
-                  </div>
-                  <div className="flex items-center gap-4 bg-white/40 self-start rounded-full p-1 border border-[#E67E22]/10">
-                    <button 
-                      onClick={() => onUpdateQty(item.id, -1)}
-                      className="w-7 h-7 flex items-center justify-center rounded-full bg-white text-[#5D4037] shadow-sm active:scale-75 transition-transform"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    </button>
-                    <span className="font-black text-[#5D4037] text-xs">{item.quantity}</span>
-                    <button 
-                      onClick={() => onUpdateQty(item.id, 1)}
-                      className="w-7 h-7 flex items-center justify-center rounded-full bg-[#5D4037] text-white shadow-sm active:scale-75 transition-transform"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+        <Text style={styles.sectionTitle}>Order Summary</Text>
+        {cartItems.map((item) => (
+          <View key={item.id} style={styles.orderItem}>
+            <View>
+              <Text style={styles.itemName}>{item.name}</Text>
+              <Text style={styles.itemPrice}>₹{item.price}</Text>
+            </View>
+            <View style={styles.qtyContainer}>
+              <TouchableOpacity onPress={() => onUpdateQty(item.id, -1)} style={styles.qtyBtn}>
+                <Text style={styles.qtyBtnText}>-</Text>
+              </TouchableOpacity>
+              <Text style={styles.qtyText}>{item.quantity}</Text>
+              <TouchableOpacity onPress={() => onUpdateQty(item.id, 1)} style={styles.qtyBtn}>
+                <Text style={styles.qtyBtnText}>+</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
 
-      {cartItems.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 p-6 glass-card-premium border-t border-[#E67E22]/20 shadow-2xl z-50 rounded-t-[48px]">
-          <div className="space-y-3 mb-4">
-            <div className="flex justify-between items-center px-4">
-              <span className="text-[10px] font-bold text-[#5D4037]/50 uppercase tracking-widest">{t.subtotal}</span>
-              <span className="text-sm font-bold text-[#5D4037]">₹{total}</span>
-            </div>
-            <div className="flex justify-between items-center px-4">
-              <span className="text-[10px] font-bold text-[#5D4037]/50 uppercase tracking-widest">{t.tax}</span>
-              <span className="text-sm font-bold text-[#5D4037]">₹{(total * 0.05).toFixed(0)}</span>
-            </div>
-            <div className="h-[1px] bg-[#E67E22]/10 mx-4"></div>
-            <div className="flex justify-between items-center px-4">
-              <span className="text-lg font-serif font-bold text-[#5D4037]">{t.grandTotal}</span>
-              <span className="text-2xl font-serif font-bold text-[#E67E22]">₹{(total * 1.05).toFixed(0)}</span>
-            </div>
-          </div>
-          
-          <Button 
-            label={t.place} 
-            variant="primary" 
-            onClick={() => {
-              if(!tableNumber.trim()){
-                alert(t.required);
-                return;
-              }
-              onPlaceOrder(tableNumber);
-            }} 
-            className="saffron-gradient py-5 text-[11px] font-black tracking-[0.2em] uppercase rounded-3xl" 
-          />
-        </div>
-      )}
-    </div>
+        <View style={styles.totalsCard}>
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Subtotal</Text>
+            <Text style={styles.totalVal}>₹{subtotal}</Text>
+          </View>
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>GST (5%)</Text>
+            <Text style={styles.totalVal}>₹{tax.toFixed(0)}</Text>
+          </View>
+          <View style={[styles.totalRow, { marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderColor: '#EEE' }]}>
+            <Text style={[styles.totalLabel, { fontSize: 18, color: COLORS.primary }]}>Total Amount</Text>
+            <Text style={[styles.totalVal, { fontSize: 22, color: COLORS.saffron }]}>₹{total.toFixed(0)}</Text>
+          </View>
+        </View>
+
+        <Button 
+          label="Place Order" 
+          onPress={() => onPlaceOrder(tableNumber)} 
+          style={{ marginTop: 30 }} 
+        />
+        <View style={{ height: 100 }} />
+      </ScrollView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  header: {
+    paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.white,
+  },
+  backBtn: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.primary,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: COLORS.primary,
+    textTransform: 'uppercase',
+  },
+  content: {
+    padding: 20,
+  },
+  tableCard: {
+    backgroundColor: COLORS.white,
+    padding: 25,
+    borderRadius: 30,
+    marginBottom: 25,
+    borderWidth: 2,
+    borderColor: COLORS.saffron,
+  },
+  tableLabel: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: COLORS.saffron,
+    textTransform: 'uppercase',
+    marginBottom: 10,
+  },
+  tableInput: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: COLORS.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: '#DDD',
+    paddingVertical: 10,
+  },
+  infoText: {
+    marginTop: 15,
+    fontSize: 11,
+    color: '#888',
+    fontStyle: 'italic',
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: COLORS.primary,
+    textTransform: 'uppercase',
+    marginBottom: 15,
+    marginLeft: 5,
+  },
+  orderItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: COLORS.white,
+    padding: 20,
+    borderRadius: 20,
+    marginBottom: 10,
+  },
+  itemName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.primary,
+  },
+  itemPrice: {
+    fontSize: 12,
+    color: COLORS.saffron,
+    fontWeight: 'bold',
+  },
+  qtyContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.lightGray,
+    borderRadius: 12,
+    padding: 4,
+  },
+  qtyBtn: {
+    width: 32,
+    height: 32,
+    backgroundColor: COLORS.white,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  qtyBtnText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+  },
+  qtyText: {
+    paddingHorizontal: 15,
+    fontWeight: '900',
+    color: COLORS.primary,
+  },
+  totalsCard: {
+    marginTop: 20,
+    backgroundColor: COLORS.white,
+    padding: 25,
+    borderRadius: 30,
+  },
+  totalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  totalLabel: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#999',
+    textTransform: 'uppercase',
+  },
+  totalVal: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+  }
+});
 
 export default DineInOrderScreen;

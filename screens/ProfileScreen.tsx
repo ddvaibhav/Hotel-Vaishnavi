@@ -1,7 +1,9 @@
 
 import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
 import { User } from '../types';
 import Button from '../components/Button';
+import { COLORS } from '../styles';
 
 interface ProfileScreenProps {
   user: User | null;
@@ -11,53 +13,152 @@ interface ProfileScreenProps {
 }
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onBack, onLogout, onOrders }) => {
-  const menuItems = [
-    { label: 'My Orders', icon: '📜', action: onOrders },
-    { label: 'Payment Methods', icon: '💳', action: () => {} },
-    { label: 'Settings', icon: '⚙️', action: () => {} },
-    { label: 'Help & Support', icon: '💬', action: () => {} },
+  const menuOptions = [
+    { label: 'Dine-In Orders', icon: '🍛', action: onOrders },
+    { label: 'Payment Settings', icon: '💳', action: () => {} },
+    { label: 'Account Settings', icon: '⚙️', action: () => {} },
+    { label: 'Contact Support', icon: '💬', action: () => {} },
   ];
 
   return (
-    <div className="h-full flex flex-col bg-transparent">
-      <div className="p-6 flex items-center gap-4 sticky top-0 z-10">
-        <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/60 backdrop-blur-md shadow-sm text-[#5D4037]">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-        <h1 className="text-xl font-serif font-bold text-[#5D4037]">My Profile</h1>
-      </div>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+          <Text style={styles.backIcon}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Profile</Text>
+        <View style={{ width: 40 }} />
+      </View>
 
-      <div className="px-6 flex flex-col items-center py-8">
-        <div className="w-32 h-32 rounded-full border-4 border-[#D4AF37] p-1 mb-4 shadow-xl bg-white/40">
-          <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.name || 'Guest'}`} alt="profile" className="w-full h-full rounded-full bg-white shadow-inner" />
-        </div>
-        <h2 className="text-2xl font-serif font-bold text-[#5D4037]">{user?.name || 'Guest User'}</h2>
-        <p className="text-[#5D4037]/60 text-sm mb-1">{user?.email || 'guest@vaishnavi.com'}</p>
-        <p className="text-[#5D4037]/60 text-sm">{user?.mobile || '+91 00000 00000'}</p>
-      </div>
+      <ScrollView style={styles.content}>
+        <View style={styles.userCard}>
+          <View style={styles.avatarContainer}>
+             <Text style={styles.avatarText}>{user?.name?.charAt(0) || 'G'}</Text>
+          </View>
+          <Text style={styles.userName}>{user?.name || 'Guest'}</Text>
+          <Text style={styles.userEmail}>{user?.email || 'guest@vaishnavi.com'}</Text>
+        </View>
 
-      <div className="px-6 mt-4 space-y-3">
-        {menuItems.map((item, idx) => (
-          <button 
-            key={idx} 
-            onClick={item.action}
-            className="w-full glass-card-premium p-4 rounded-2xl flex items-center justify-between shadow-sm active:bg-white/90 transition-all active:scale-[0.98]"
-          >
-            <div className="flex items-center gap-4">
-              <span className="text-xl">{item.icon}</span>
-              <span className="text-sm font-bold text-[#5D4037] uppercase tracking-wider">{item.label}</span>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-[#D4AF37]"><path d="m9 18 6-6-6-6"/></svg>
-          </button>
-        ))}
-      </div>
+        <View style={styles.options}>
+          {menuOptions.map((opt, i) => (
+            <TouchableOpacity key={i} style={styles.optionItem} onPress={opt.action}>
+              <View style={styles.optionLeft}>
+                <Text style={styles.optionIcon}>{opt.icon}</Text>
+                <Text style={styles.optionLabel}>{opt.label}</Text>
+              </View>
+              <Text style={styles.chevron}>›</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <div className="mt-auto p-8">
-        <Button label="Logout" variant="outline" onClick={onLogout} />
-        <p className="mt-6 text-center text-[10px] text-[#5D4037]/30 font-bold uppercase tracking-[0.3em]">Version 2.4.1 (Stable)</p>
-      </div>
-    </div>
+        <View style={styles.footer}>
+          <Button label="Logout" variant="outline" onPress={onLogout} />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.cream,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 20,
+    backgroundColor: COLORS.white,
+  },
+  backButton: {
+    padding: 5,
+  },
+  backIcon: {
+    fontSize: 24,
+    color: COLORS.primary,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    fontFamily: 'serif',
+  },
+  content: {
+    flex: 1,
+  },
+  userCard: {
+    alignItems: 'center',
+    padding: 40,
+    backgroundColor: COLORS.white,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  avatarContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: COLORS.saffron,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  avatarText: {
+    fontSize: 32,
+    color: COLORS.white,
+    fontWeight: 'bold',
+  },
+  userName: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    fontFamily: 'serif',
+  },
+  userEmail: {
+    fontSize: 14,
+    color: COLORS.primary,
+    opacity: 0.5,
+    marginTop: 4,
+  },
+  options: {
+    padding: 20,
+    marginTop: 20,
+  },
+  optionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.white,
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 12,
+  },
+  optionLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  optionIcon: {
+    fontSize: 20,
+    marginRight: 12,
+  },
+  optionLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+  },
+  chevron: {
+    fontSize: 24,
+    color: COLORS.primary,
+    opacity: 0.2,
+  },
+  footer: {
+    padding: 30,
+    marginTop: 20,
+  }
+});
 
 export default ProfileScreen;

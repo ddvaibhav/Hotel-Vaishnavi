@@ -1,30 +1,70 @@
 
 import React from 'react';
-import { MOCK_SLOGAN } from '../constants';
+import { View, Text, StyleSheet, Animated } from 'react-native';
+import { COLORS } from '../styles';
+import { APP_NAME, TAGLINE, MARATHI_NAME } from '../constants';
 
 const SplashScreen: React.FC = () => {
   return (
-    <div className="h-full flex flex-col items-center justify-center bg-[#5D4037] text-[#FDFBF7] p-8">
-      <div className="mb-6 animate-pulse">
-        <div className="w-24 h-24 border-2 border-[#D4AF37] rounded-full flex items-center justify-center p-4">
-          <div className="w-16 h-16 border-4 border-[#D4AF37] rounded-sm transform rotate-45 flex items-center justify-center">
-            <span className="transform -rotate-45 text-4xl font-serif font-bold">V</span>
-          </div>
-        </div>
-      </div>
-      <h1 className="text-3xl font-serif font-bold tracking-[0.2em] mb-2 uppercase">Vaishnavi</h1>
-      <h2 className="text-lg font-light tracking-[0.3em] uppercase mb-12 opacity-80">Restaurant & Bar</h2>
-      
-      <div className="flex gap-4 text-[10px] tracking-[0.2em] uppercase opacity-60">
-        {MOCK_SLOGAN.split(' • ').map((tag, i) => (
-          <React.Fragment key={tag}>
-            <span>{tag}</span>
-            {i < 2 && <span>•</span>}
-          </React.Fragment>
-        ))}
-      </div>
-    </div>
+    <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <View style={styles.logoBorder}>
+          <Text style={styles.logoInitial}>V</Text>
+        </View>
+      </View>
+      <Text style={styles.marathiName}>{MARATHI_NAME}</Text>
+      <Text style={styles.appName}>{APP_NAME}</Text>
+      <Text style={styles.tagline}>{TAGLINE}</Text>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoContainer: {
+    marginBottom: 30,
+  },
+  logoBorder: {
+    width: 100,
+    height: 100,
+    borderWidth: 2,
+    borderColor: COLORS.gold,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoInitial: {
+    fontSize: 50,
+    color: COLORS.gold,
+    fontWeight: '700',
+    fontFamily: 'serif',
+  },
+  marathiName: {
+    fontSize: 28,
+    color: COLORS.white,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  appName: {
+    fontSize: 18,
+    color: COLORS.gold,
+    fontWeight: '400',
+    letterSpacing: 4,
+    textTransform: 'uppercase',
+  },
+  tagline: {
+    marginTop: 20,
+    fontSize: 10,
+    color: COLORS.white,
+    opacity: 0.6,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  }
+});
 
 export default SplashScreen;
